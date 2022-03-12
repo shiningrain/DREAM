@@ -84,18 +84,6 @@ class LossHistory(keras.callbacks.Callback):
         get_gradient(self.model_path,self.x_path,self.y_path,epoch,self.save_path)
 
 
-
-def get_gradient(model_path,x_path,y_path,epoch,save_path):
-    import subprocess
-    command="/data1/zxy/anaconda3/envs/test_form/bin/python ./utils/get_gradient_on_cpu.py -m {} -dx {} -dy {} -ep {} -sp {}" #TODO:need to set your your python interpreter path
-
-    out_path=save_path.split('.')[0]+'_out'
-    out_file = open(out_path, 'w')
-    out_file.write('logs\n')
-    run_cmd=command.format(model_path,x_path,y_path,epoch,save_path)
-    subprocess.Popen(run_cmd, shell=True, stdout=out_file, stderr=out_file)
-
-
 def read_data(dataset,batch_size):
     # read data from a new unzipped dataset.
     trainX=dataset['x'][:batch_size]

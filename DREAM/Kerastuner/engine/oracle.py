@@ -138,7 +138,7 @@ class Oracle(stateful.Stateful):
         trial.best_step = trial.metrics.get_best_step(self.objective.name)
 
     # def create_trial(self, tuner_id):
-    #  zxy
+    #  modify
     def create_trial(self, tuner_id, root_path=None):
     
         """Create a new `Trial` to be run by the `Tuner`.
@@ -166,7 +166,7 @@ class Oracle(stateful.Stateful):
             values = None
         else:
             # response = self._populate_space(trial_id)
-            # zxy
+            # modify
             response = self._populate_space(trial_id,root_path=root_path)
             
             status = response['status']

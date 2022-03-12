@@ -120,7 +120,7 @@ class BaseTuner(stateful.Stateful):
         while True:
             # trial = self.oracle.create_trial(self.tuner_id)
 
-            # zxy
+            # modify
             if 'root_path' in fit_kwargs.keys():
                 trial = self.oracle.create_trial(self.tuner_id,root_path=fit_kwargs['root_path'])
             else:

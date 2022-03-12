@@ -622,10 +622,10 @@ class HyperParameters(object):
         """Gets or creates a `HyperParameter`."""
         if self._exists(hp.name, hp.conditions):
             if self._conditions_are_active(hp.conditions):
-                # zxy
+                # modify
                 if hp.name not in self.values.keys():
                     return self._register(hp)
-                # zxy previous lines is prepare for special situation to avoid error.
+                # modify previous lines is prepare for special situation to avoid error.
                 return self.values[hp.name]
             return None  # Ensures inactive values are not relied on by user.
         return self._register(hp)

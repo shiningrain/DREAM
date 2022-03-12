@@ -92,7 +92,7 @@ class KerasHyperModel(HyperModel):
 
         self._max_fail_streak = 5
 
-    # zxy
+    # modify
     def build_optimizer(self,hp,model):
         model = self.hypermodel._compile_keras_model(hp,model)
         return model

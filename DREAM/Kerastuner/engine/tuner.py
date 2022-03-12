@@ -169,7 +169,7 @@ class Tuner(base_tuner.BaseTuner):
         callbacks.append(tuner_utils.TunerCallback(self, trial))
         copied_fit_kwargs['callbacks'] = callbacks
 
-        # # zxy
+        # # modify
         # self._build_and_fit_model_beam(trial, fit_args, copied_fit_kwargs)
         self._build_and_fit_model_greedy(trial, fit_args, copied_fit_kwargs)
         # self._build_and_fit_model(trial, fit_args, copied_fit_kwargs)

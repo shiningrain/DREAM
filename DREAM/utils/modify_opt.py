@@ -175,18 +175,7 @@ def get_not_dense_list(model):
     return not_dense_list
 
 def modify_activations(model,activation_name,method='normal'):#https://github.com/keras-team/keras/issues/9370
-    #重写该函数，针对特定层包过batchnorm的情况
-    """
-    normal method: activaiton is a function
-    special method activation is a string
-    首先检测模型输入层，建立正确的模型层列表。
-    随后检查高级层，将高级激活函数层删除，建立临时模型；
-    再检查所有可变激活函数的模型层，改变其激活函数。
 
-    对于特殊激活函数，仅改变最后一步
-
-    该版本不再特殊处理lstm层。
-    """
     
     # true_layer_list=find_true_layer(model.layers)
     # print(1)

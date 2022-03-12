@@ -1,0 +1,6 @@
+autokeras==1.0.12
+tensorflow_gpu==2.4.3
+Keras==2.3.1
+keras-tuner==1.0.2
+matplotlib==3.3.0
+tensorflow_datasets==2.1.0
