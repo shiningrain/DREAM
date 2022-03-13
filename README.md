@@ -97,7 +97,7 @@ The following two figures show the effectiveness of DREAM in repairing the perfo
 Our experiment results on four datasets are saved in [here](xxxx).
 Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](xxx).
 
-The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.tsv)
+The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.md)
 
 In addition, the search results of two cases in Motivation are also shown in [`Motivation`](./Motivation).
 The `log.pkl` contains the search history of each strategy, and the `best_param.pkl` stores the best model architecture in each search.
