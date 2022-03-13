@@ -76,7 +76,7 @@ When you have downloaded the dataset, you need to assign the `data_dir` in the l
 
 ### RQ1-Figure
 
-To evaluate the effectiveness of DREAM in fixing the AutoML in- effective search bug and performance bug, we conduct comparative experiments with a total of fifteen searches on four datasets with each search strategy (i.e., three baseline strategies in AutoKeras and the repaired search in DREAM).
+To evaluate the effectiveness of DREAM in fixing the AutoML ineffective search bug and performance bug, we conduct comparative experiments with a total of fifteen searches on four datasets with each search strategy (i.e., three baseline strategies in AutoKeras and the repaired search in DREAM).
 In this experiment, we observe whether DREAM can effectively repair the bugs in the AutoML pipeline and guide the search to perform better and more effectively, and the results are shown in this [directory](./SupplementalExperimentResults/RQ1-Figure).
 
 The results show that *DREAM* is effective in repairing the performance and ineffective search bugs of the AutoML pipeline.
@@ -95,13 +95,16 @@ The following two figures show the effectiveness of DREAM in repairing the perfo
 ## Reproduction
 
 Our experiment results on four datasets are saved in [here](xxxx).
+由于搜索中单个模型最大接近1GB，而我们的实验搜索了数百个模型可能带来过大的数据量，因此我们只保留了一部分样例模型用于展示，大部分模型仅保留了对应的架构，你可以参考xx的代码来加载复原这些模型。
+Since the maximum model in our search is close to 1 GB, and our experiments search hundreds of models, which may bring too large amount of data, we only reserve part of the sample models for display, and most of the models only reserved the corresponding architectures and hyperparameters.
+You can refer to this [code](./SupplementalExperimentResults/reproduct_models_from_parameters/reproduce_experiment_model.py) to load and restore these models from the `param.pkl`.
 Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](xxx).
 
 The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.md)
 
 In addition, the search results of two cases in Motivation are also shown in [`Motivation`](./Motivation).
 The `log.pkl` contains the search history of each strategy, and the `best_param.pkl` stores the best model architecture in each search.
-If you want to reproduce the DREAM search in Motivation, you can use the [demo file](./DREAM/demo0.py) to load the `param_initial.pkl` as the initial architecture `args.origin_path` to start search.
+If you want to reproduce the DREAM search in Motivation, you can use the [demo file](./DREAM/demo0.py) to load the `param_initial.pkl` as the initial architecture `args.origin_path` to start the search.
 
 
 If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly.
