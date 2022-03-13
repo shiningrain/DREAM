@@ -70,7 +70,7 @@ $ python demo.py
 
 If you want to use other datasets (e.g., Food-101 and Stanford Cars in our experiment), you can use `tensorflow_datasets` to load the dataset, refering to [this doc](https://www.tensorflow.org/datasets/api_docs/python/tfds/load). For the TinyImagenet dataset in our experiments, we use the loader from this [repo](https://github.com/ksachdeva/tiny-imagenet-tfds).
 The loaders of these three datasets are in the [demo.py](./DREAM/demo0.py).
-When you have downloaded the dataset, you need to assign the `data_dir` in the loader to your dataset path and choose the `data` in the 'argparse' before searching.
+When you have downloaded the dataset, you need to assign the `data_dir` in the loader `tfds.load()` to your dataset path and use `-d` to assign the data type before searching.
 
 ## Experiment Results
 
@@ -98,11 +98,12 @@ Our experiment results on four datasets are saved in [here](xxxx).
 Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](xxx).
 
 The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.tsv)
+
 In addition, the search results of two cases in Motivation are also shown in [`Motivation`](./Motivation).
 The `log.pkl` contains the search history of each strategy, and the `best_param.pkl` stores the best model architecture in each search.
-If you want to reproduce the DREAM search in Motivation, you can use the [demo file](./DREAM/demo0.py) to load the `param_SearchSeed.pkl` as the initial architecture `args.origin_path` in search.
+If you want to reproduce the DREAM search in Motivation, you can use the [demo file](./DREAM/demo0.py) to load the `param_initial.pkl` as the initial architecture `args.origin_path` to start search.
 
 
-If you want to reproduce our experiment, you can use the [demo.py](./DREAM/demo0.py) directly.
+If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly.
 It is worth mentioning that you need to use `-op` to assign the initial model architecture as the beginning of the search.
 The result will be saved in this [directory](./DREAM/Test_dir/demo_result) and the [log](./DREAM/Test_dir/demo_result/log.pkl) will also save there.
