@@ -95,12 +95,11 @@ The following two figures show the effectiveness of DREAM in repairing the perfo
 ## Reproduction
 
 Our experiment results on four datasets are saved in [here](xxxx).
-由于搜索中单个模型最大接近1GB，而我们的实验搜索了数百个模型可能带来过大的数据量，因此我们只保留了一部分样例模型用于展示，大部分模型仅保留了对应的架构，你可以参考xx的代码来加载复原这些模型。
-Since the maximum model in our search is close to 1 GB, and our experiments search hundreds of models, which may bring too large amount of data, we only reserve part of the sample models for display, and most of the models only reserved the corresponding architectures and hyperparameters.
+Since the maximum model in our search is close to 1 GB, and our experiments search hundreds of models, which may bring a large amount of data, we only reserve part of the sample models for display, and most of the models only reserved the corresponding architectures and hyperparameters.
 You can refer to this [code](./SupplementalExperimentResults/reproduct_models_from_parameters/reproduce_experiment_model.py) to load and restore these models from the `param.pkl`.
 Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](xxx).
 
-The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.md)
+The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.md), and the full table of the search actions are shown as [this table](./SupplementalExperimentResults/ActionTable.md)
 
 In addition, the search results of two cases in Motivation are also shown in [`Motivation`](./Motivation).
 The `log.pkl` contains the search history of each strategy, and the `best_param.pkl` stores the best model architecture in each search.
