@@ -17,15 +17,19 @@ It focuses on the performance and ineffective search bugs.
     - Test_dir/  
         - demo_origin/
     - utils/         
-    - initial_Dream.sh            
+    - initial_Dream.sh     
+    - backup_reset.sh       
     - demo0.py   
+    - test_run_autokeras.py
     - replace.txt
     - requirements.txt               
 - Motivation/                      
-- SupplementalExperimentResults/                      
+- SupplementalExperimentResults/   
+    - load_param4autokeras                   
     - RQ1-Figure/
     - reproduct_models_from_parameters/
-    - PriorityTable.tsv
+    - PriorityTable.md
+    - ActionTable.md
 - README.md
 
 ```
@@ -41,17 +45,21 @@ $ pip install-r requirements.txt
 ```
 
 After installing TensorFlow and AutoKeras, use the following command to install the DREAM in AutoKeras.
-As shown in the 3rd line, `initial_Dream.sh` need the site-package dir and the python path as inputs.
+The [`backup_reset.sh`](./DREAM/backup_reset.sh) will make a backup for the original AutoKeras and KerasTuner libs when first used.
+Calling this script later will use the backup libs to restore to eliminate the impact of the modified code.
+The script `initial_Dream.sh` will implement `DREAM` based on the original AutoKeras and KerasTuner libs.
+As shown in the 4th line, `initial_Dream.sh` need the site-package dir and the python path as inputs.
 
 ```bash
 $ cd ./DREAM
 $ chmod +x ./initial_Dream.sh
+$ ./backup_reset.sh /xxx/envs/env_name/lib/python3.7/site-packages
 $ ./initial_Dream.sh /xxx/envs/env_name/lib/python3.7/site-packages /xxx/envs/env_name/bin/python
 ```
 
 The current version of DREAM will substitute the Greedy search strategy in AutoKeras. 
-We're not sure if the code of the search strategies in AutoKeras potentially conflicts with DREAM.
-Therefore we suggest that if you still want to use the unrepaired search of AutoKeras, you could make a backup for the original AutoKeras and Kerastuner lib before installing DREAM, or you could refer to the [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to clone the same environment with original AutoKeras.
+We are not sure whether the code of the search strategies in AutoKeras potentially conflicts with DREAM.
+Therefore we suggest that if you still want to use the unrepaired search of AutoKeras, you could use `backup_reset.sh` to make a backup for the original AutoKeras and Kerastuner lib before installing DREAM, or you could refer to the [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to clone the same environment with original AutoKeras.
 **In the future, we will continue to improve the DREAM to avoid conflicts between the search strategies.**
 
 
@@ -64,11 +72,11 @@ You can just run [demo.py](./DREAM/demo0.py) to see how *DREAM* search models wi
 In addition, you can also specify the parameters in this code to customize the search process. We have made some necessary comments on the code for easy understanding.
 
 ``` bash
-$ $ cd ./DREAM
+$ cd ./DREAM
 $ python demo.py
 ```
 
-If you want to use other datasets (e.g., Food-101 and Stanford Cars in our experiment), you can use `tensorflow_datasets` to load the dataset, refering to [this doc](https://www.tensorflow.org/datasets/api_docs/python/tfds/load). For the TinyImagenet dataset in our experiments, we use the loader from this [repo](https://github.com/ksachdeva/tiny-imagenet-tfds).
+If you want to use other datasets (e.g., Food-101 and Stanford Cars in our experiment), you can use `tensorflow_datasets` to load the dataset, referring to [this doc](https://www.tensorflow.org/datasets/api_docs/python/tfds/load). For the TinyImagenet dataset in our experiments, we use the loader from this [repo](https://github.com/ksachdeva/tiny-imagenet-tfds).
 The loaders of these three datasets are in the [demo.py](./DREAM/demo0.py).
 When you have downloaded the dataset, you need to assign the `data_dir` in the loader `tfds.load()` to your dataset path and use `-d` to assign the data type before searching.
 
@@ -106,6 +114,24 @@ The `log.pkl` contains the search history of each strategy, and the `best_param.
 If you want to reproduce the DREAM search in Motivation, you can use the [demo file](./DREAM/demo0.py) to load the `param_initial.pkl` as the initial architecture `args.origin_path` to start the search.
 
 
-If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly.
+If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly to reproduce the repair of `DREAM`.
 It is worth mentioning that you need to use `-op` to assign the initial model architecture as the beginning of the search.
 The result will be saved in this [directory](./DREAM/Test_dir/demo_result) and the [log](./DREAM/Test_dir/demo_result/log.pkl) will also save there.
+If you want to conduct comparison experiments with AutoKeras methods, you need to use [`backup_reset.sh`](./DREAM/backup_reset.sh) to restore the original AutoKeras library, and then use the [`replace_file.sh`](./SupplementalExperimentResults/load_param4autokeras/replace_file.sh) to modify the library to load the initial parameter and record the search logs, as shown below.
+
+```bash
+$ cd ./DREAM
+$ ./backup_reset.sh /xxx/envs/env_name/lib/python3.7/site-packages
+$ cd ../SupplementalExperimentResults/load_param4autokeras
+$ ./replace_file.sh /xxx/envs/env_name/lib/python3.7/site-packages
+```
+
+After completing the environment configuration, you can use [`test_run_autokeras.py`](./DREAM/test_run_autokeras.py) to reproduce the experimental results and search process of the three search strategies of AutoKeras, shown as follows.
+
+```bash
+$ cd ./DREAM
+$ python test_run_autokeras.py -d cifar100 -tn greedy
+```
+
+The `-tn` can assign the search strategies (i.e., greedy, bayesian, hyperband) in AutoKeras, and `-op` assign the initial model architecture as the beginning of the search.
+Due to the inevitable random variables in the search strategies, we cannot guarantee that the search results are completely consistent with our experimental results, but this random factor will not affect the effectiveness of DREAM in repairing bugs.
