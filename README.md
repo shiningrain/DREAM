@@ -6,7 +6,7 @@ An automatic debugging and repairing system for AutoML systems.
 It monitors the process of AutoML to collect detailed feedback and automatically repairs bugs by expanding search space and leveraging a feedback-driven search strategy.
 It focuses on the performance and ineffective search bugs.
 
-Due to space limitations, we provide an **Expanded Report of DREAM** in this file to describe the details of the experiments in the Design section.
+Due to space limitations, we provide an **Extented Report of DREAM** in this file to describe the details of the experiments in the Design section.
 
 *Our system is still a prototype, and we will continue to optimize and improve this system.*
 
