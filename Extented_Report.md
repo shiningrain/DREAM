@@ -17,7 +17,10 @@ All the training processes mentioned here include 15 epochs, and the batch size 
 After these training processes are finished, we calculate the change of accuracy from the pair $O-V$, which is written as
 $\Delta Acc_{O-V} = Acc_{O-V}-Acc_{ori}$.
 Finally, we calculate the conditional probability $\mathbb{P}(Action | A, C, G, W)$.
-$$\mathbb{P}(Action | A, C, G, W) = \frac{\sum_{i = 0}^{n} \Delta Acc^{i}_{O-V}} {n} $$
+$$
+\mathbb{P}(Action | A, C, G, W) = \frac{\sum_{i = 0}^{n} \Delta Acc^{i}_{O-V}} {n}
+$$
+
 where $n$ represents the amount of models under the same *A-C-G-W* condition.
 Larger $\mathbb{P}(Action | A, C, G, W)$ means that the action with the object $O$ and value $V$ are more prioritized in search and have more possibility to improve the current search performance.
 We implement these evaluated priorities as the default setting in the feedback-driven search to fix the AutoML pipeline and guide the pipeline to search effectively.
@@ -40,7 +43,7 @@ Here is a demo case to illustrate how the feedback-driven search performs with t
 ![figure](./SupplementalExperimentResults/demo.png)
 
 For the ``Model 1`` with an initial score of 0.52 and the conditions as ``OA-NC-NG-NW``, as shown in the 14th column of [the priority table](./SupplementalExperimentResults/PriorityTable.md), the action with the highest priority is ``block type=xception``, which means that the object in this action is ``block type`` and the new value for it is ``xception``.
-This action will change the model architecture to \textit{XceptionNet}.
+This action will change the model architecture to *XceptionNet*.
 After applying this action and generating the ``Model 2``, the search score in training has increased to 0.78, and the conditions have turned to ``XA-NC-NG-NW``, whose priority is listed in the last column of [the priority table](./SupplementalExperimentResults/PriorityTable.md).
 The action with the highest priority in current conditions is ``pretrained=True``.
 However, when building ``Model 2``, the hyperparameter ``pretrained`` has already been set to ``True``.
@@ -65,20 +68,20 @@ To determine the actual effect of beam search as an alternative search method, w
 The experiment ensures that the search priority and search space of the two search strategies are consistent.
 In order to control the overhead of beam search, the beam width is set to 3.
 In addition, with the intention of improving the search efficiency of beam search and covering more possible models in search, we implement a two-step search.
-In the first step, we train nine searched models with the highest priorities, which are generated from the previous search, on a 10\% subset of the CIFAR-100 dataset.
+In the first step, we train nine searched models with the highest priorities, which are generated from the previous search, on a 10% subset of the CIFAR-100 dataset.
 Then in the second step, three models with the best performance in the first step are reserved for the complete training.
 In addition, in order to avoid beam search converging in local optimum, all hyperparameters in the models in searches have a chance of 0.01 to randomly mutate.
 
 ![figure](./SupplementalExperimentResults/GreedyVSBeam.png)
 
 The above figure shows the comparison results of beam search and greedy search on the CIFAR-100 dataset, where the X-axis is the GPU hours spent in the search, and the Y-axis is the best validation accuracy the search reached.
-We implement two kinds of beam search in the experiments, namely a search trained in two steps with a 10\% subset of the dataset as described above (i.e., `Beam Search (Subset)'), and a search trained directly on the full dataset without the subset (i.e., `Beam Search (Full Dataset)'). 
+We implement two kinds of beam search in the experiments, namely a search trained in two steps with a 10% subset of the dataset as described above (i.e., `Beam Search (Subset)`), and a search trained directly on the full dataset without the subset (i.e., `Beam Search (Full Dataset)`). 
 The experimental results demonstrate the superiority of greedy search in search efficiency and effectiveness.
 From this figure, greedy search improves accuracy faster than beam search using subsets.
 And beam search trained on the full dataset performs worst in these search methods.
 We analyze the specific process of the search manually and find that the main reason for the performance difference is that the beam search trains more models, and most of them help little in improving the search performance.
 This results in that the search efficiency of beam search is worse than that of greedy search in the case of the same search space and search priorities.
-Even for the search that most of the models are training on the subset of the CIFAR-100 dataset, the time cost of beam search to reach 80\% accuracy is still nearly 6 hours higher than the time spent of greedy search due to the time overhead of training additional models.
+Even for the search that most of the models are training on the subset of the CIFAR-100 dataset, the time cost of beam search to reach 80% accuracy is still nearly 6 hours higher than the time spent of greedy search due to the time overhead of training additional models.
 
 Therefore, for the consideration of efficiency and effectiveness in search, we select the greedy method as the default strategy of the feedback-driven search.
 We believe that beam search has the potential to achieve better results when computing resources are sufficient and training can be deployed in parallel.
