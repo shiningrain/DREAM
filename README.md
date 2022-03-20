@@ -36,52 +36,6 @@ Due to space limitations, we provide an **Extented Report of DREAM** in this fil
 
 ```
 
-## Setup
-DREAM is implemented on Python 3.7.7, TensorFlow 2.4.3, and AutoKeras 1.0.12.
-To install all dependencies, please get into this directory and run the following command.
-It is worthy to notice that TensorFlow may have compatibility problems on different versions.
-**Please make sure the version of TensorFlow is 2.4.3** after installation.
-
-```bash
-$ pip install-r requirements.txt
-```
-
-After installing TensorFlow and AutoKeras, use the following command to install the DREAM in AutoKeras.
-The [`backup_reset.sh`](./DREAM/backup_reset.sh) will make a backup for the original AutoKeras and KerasTuner libs when first used.
-Calling this script later will use the backup libs to restore to eliminate the impact of the modified code.
-The script `initial_Dream.sh` will implement `DREAM` based on the original AutoKeras and KerasTuner libs.
-As shown in the 4th line, `initial_Dream.sh` need the site-package dir and the python path as inputs.
-
-```bash
-$ cd ./DREAM
-$ chmod +x ./initial_Dream.sh
-$ ./backup_reset.sh /xxx/envs/env_name/lib/python3.7/site-packages
-$ ./initial_Dream.sh /xxx/envs/env_name/lib/python3.7/site-packages /xxx/envs/env_name/bin/python
-```
-
-The current version of DREAM will substitute the Greedy search strategy in AutoKeras. 
-We are not sure whether the code of the search strategies in AutoKeras potentially conflicts with DREAM.
-Therefore we suggest that if you still want to use the unrepaired search of AutoKeras, you could use `backup_reset.sh` to make a backup for the original AutoKeras and Kerastuner lib before installing DREAM, or you could refer to the [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to clone the same environment with original AutoKeras.
-**In the future, we will continue to improve the DREAM to avoid conflicts between the search strategies.**
-
-
-
-## Usage
-It is easy to use *DREAM* to repair the AutoML pipeline and conduct effective searches. 
-When the environment configuration in `Setup` is finished, you can use *DREAM* to search models directly by using `greedy` tuner in `autokeras.ImageClassifier()`.
-To show our method intuitively, we provide a demo case in [demo.py](./DREAM/demo0.py), which is based on the CIFAR-100 dataset.
-You can just run [demo.py](./DREAM/demo0.py) to see how *DREAM* search models with the expanded search space and feedback-driven search.
-In addition, you can also specify the parameters in this code to customize the search process. We have made some necessary comments on the code for easy understanding.
-
-``` bash
-$ cd ./DREAM
-$ python demo.py
-```
-
-When you want to use other datasets (e.g., Food-101 and Stanford Cars in our experiment), you can use `tensorflow_datasets` to load the dataset, referring to [this doc](https://www.tensorflow.org/datasets/api_docs/python/tfds/load). For the TinyImagenet dataset in our experiments, we use the loader from this [repo](https://github.com/ksachdeva/tiny-imagenet-tfds).
-The loaders of these three datasets are in the [demo.py](./DREAM/demo0.py).
-When you have downloaded the dataset, you need to assign the `data_dir` in the loader `tfds.load()` to your dataset path and use `-d` to assign the data type before searching.
-
 ## Expanded Report of DREAM
 
 <details>
@@ -126,7 +80,7 @@ Here is a demo case to illustrate how the feedback-driven search performs with t
 
 For the ``Model 1`` with an initial score of 0.52 and the conditions as ``OA-NC-NG-NW``, as shown in the 14th column of [the priority table](./SupplementalExperimentResults/PriorityTable.md), the action with the highest priority is ``block type=xception``, which means that the object in this action is ``block type`` and the new value for it is ``xception``.
 This action will change the model architecture to \textit{XceptionNet}.
-After applying this action and generating the ``Model 2``, the search score in training has increased to 0.78, and the conditions have turned to ``XA-NC-NG-NW``, whose priority is listed in the last line of [the priority table](./SupplementalExperimentResults/PriorityTable.md).
+After applying this action and generating the ``Model 2``, the search score in training has increased to 0.78, and the conditions have turned to ``XA-NC-NG-NW``, whose priority is listed in the last column of [the priority table](./SupplementalExperimentResults/PriorityTable.md).
 The action with the highest priority in current conditions is ``pretrained=True``.
 However, when building ``Model 2``, the hyperparameter ``pretrained`` has already been set to ``True``.
 Therefore, ``pretrained=True`` is skipped, and ``trainable=True``, which has the next highest priority under the conditions, is selected as the action for this search.
@@ -172,6 +126,54 @@ It will be our future work to improve the effectiveness of the feedback-driven b
 
 </details>
 
+## Setup
+DREAM is implemented on Python 3.7.7, TensorFlow 2.4.3, and AutoKeras 1.0.12.
+To install all dependencies, please get into this directory and run the following command.
+It is worthy to notice that TensorFlow may have compatibility problems on different versions.
+**Please make sure the version of TensorFlow is 2.4.3** after installation.
+
+```bash
+$ pip install keras-tuner==1.0.2 keras==2.3.1 tensorflow==2.4.3 autokeras==1.0.12 tensorflow_datasets==2.1.0 matplotlib==3.3.0
+$ # OR pip install-r requirements.txt
+```
+
+After installing TensorFlow and AutoKeras, use the following command to install the DREAM in AutoKeras.
+The [`backup_reset.sh`](./DREAM/backup_reset.sh) will make a backup for the original AutoKeras and KerasTuner libs when first used.
+Calling this script later will use the backup libs to restore to eliminate the impact of the modified code.
+The script `initial_Dream.sh` will implement `DREAM` based on the original AutoKeras and KerasTuner libs.
+As shown in the 4th line, `initial_Dream.sh` need the site-package dir and the python path as inputs.
+
+```bash
+$ cd ./DREAM
+$ chmod +x ./initial_Dream.sh
+$ ./backup_reset.sh /xxx/envs/env_name/lib/python3.7/site-packages
+$ ./initial_Dream.sh /xxx/envs/env_name/lib/python3.7/site-packages /xxx/envs/env_name/bin/python
+```
+
+The current version of DREAM will substitute the Greedy search strategy in AutoKeras. 
+We are not sure whether the code of the search strategies in AutoKeras potentially conflicts with DREAM.
+Therefore we suggest that if you still want to use the unrepaired search of AutoKeras, you could use `backup_reset.sh` to make a backup for the original AutoKeras and Kerastuner lib before installing DREAM, or you could refer to the [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to clone the same environment with original AutoKeras.
+**In the future, we will continue to improve the DREAM to avoid conflicts between the search strategies.**
+
+
+
+## Usage
+It is easy to use *DREAM* to repair the AutoML pipeline and conduct effective searches. 
+When the environment configuration in `Setup` is finished, you can use *DREAM* to search models directly by using `greedy` tuner in `autokeras.ImageClassifier()`.
+To show our method intuitively, we provide a demo case in [demo.py](./DREAM/demo0.py), which is based on the CIFAR-100 dataset.
+You can just run [demo.py](./DREAM/demo0.py) to see how *DREAM* search models with the expanded search space and feedback-driven search.
+In addition, you can also specify the parameters in this code to customize the search process. We have made some necessary comments on the code for easy understanding.
+
+``` bash
+$ cd ./DREAM
+$ python demo.py
+```
+
+When you want to use other datasets (e.g., Food-101 and Stanford Cars in our experiment), you can use `tensorflow_datasets` to load the dataset, referring to [this doc](https://www.tensorflow.org/datasets/api_docs/python/tfds/load). For the TinyImagenet dataset in our experiments, we use the loader from this [repo](https://github.com/ksachdeva/tiny-imagenet-tfds).
+The loaders of these three datasets are in the [demo.py](./DREAM/demo0.py).
+When you have downloaded the dataset, you need to assign the `data_dir` in the loader `tfds.load()` to your dataset path and use `-d` to assign the data type before searching.
+
+
 ## Experiment Results
 
 ### RQ1-Figure
@@ -194,10 +196,10 @@ The following two figures show the effectiveness of DREAM in repairing the perfo
 
 ## Reproduction
 
-Our experiment results on four datasets are saved in [here](xxxx).
+Our experiment results on four datasets are saved in [here](https://drive.google.com/file/d/1BMlcv9QF6k-v6GDouyu8lpA1oolMaBIp/view?usp=sharing).
 Since the maximum model in our search is close to 1 GB, and our experiments search hundreds of models, which may bring a large amount of data, we only reserve part of the sample models for display, and most of the models only reserved the corresponding architectures and hyperparameters.
 You can refer to this [code](./SupplementalExperimentResults/reproduct_models_from_parameters/reproduce_experiment_model.py) to load and restore these models from the `param.pkl`.
-Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](xxx).
+Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](https://drive.google.com/file/d/1BMlcv9QF6k-v6GDouyu8lpA1oolMaBIp/view?usp=sharing).
 
 The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.md), and the full table of the search actions are shown as [this table](./SupplementalExperimentResults/ActionTable.md).
 
