@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # method is our feedback-based search method.
     clf = ak.ImageClassifier(
     overwrite=True,directory=os.path.join(args.result_root_path,'image_classifier'),
-    max_trials=args.trials,tuner='bayesian')#,tuner='bayesian'
+    max_trials=args.trials,tuner='greedy')#,tuner='bayesian'
     
 
     if args.epoch!=None:
