@@ -35,6 +35,6 @@ do
     tmp_line=${line/autokeras/Autokeras}
     tmp_line=${tmp_line/kerastuner/Kerastuner}
     echo $tmp_line $site_path$line
-    # cp -r '.'$line $site_path$line
+    cp -r '.'$tmp_line $site_path$line
 done
 echo 'FINISH: Copy Files to AutoKeras & Kerastuner'
