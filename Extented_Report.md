@@ -1,6 +1,7 @@
 ## Expanded Report of DREAM
 
-Detailed experiments and results, search priorities, and a feedback-driven search example.
+Due to the space limitations, in the `Design` section of our paper, we only provide a brief introduction to the calculation of conditional probabilities in DREAM.
+This report provides detailed experiments and results, search priorities, and a feedback-driven search example to elaborate on our design.
 
 ### The Detailed Experiment to Calculate Conditional Probability
 
@@ -11,7 +12,7 @@ To solve this problem, we construct large-scale experiments to evaluate the sear
 We randomly generate and train 200 different models on two datasets (i.e., CIFAR-10, CIFAR-100) and record the conditions summarized from the feedback of these models.
 We record the model accuracy in training as $Acc_{ori}$.
 Next, we search all feasible actions on each model one by one and generate new models to evaluate these actions.
-Each search action can be written as $O-V$, where $O$ represents an object such as model architecture or hyperparameter this action will change, and $V$ represents the newly assigned value of the object.
+Each search action can be written as $O-V$, where $O$ represents an object (e.g., model architecture, hyperparameter) this action will change, and $V$ represents the newly assigned value of the object.
 Then we train these new models and record accuracy as $Acc_{O-V}$.
 All the training processes mentioned here include 15 epochs, and the batch size is 32.
 After these training processes are finished, we calculate the change of accuracy from the pair $O-V$, which is written as
