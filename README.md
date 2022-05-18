@@ -2,11 +2,8 @@
 
 ## TL;DR
 
-An automatic debugging and repairing system for AutoML systems.
-It monitors the process of AutoML to collect detailed feedback and automatically repairs bugs by expanding search space and leveraging a feedback-driven search strategy.
-It focuses on the performance and ineffective search bugs.
-
-Due to space limitations, we provide an **Extented Report of DREAM** in [this file](./Extented_Report.pdf) to describe the details of the experiments in the Design section.
+A model search method guided by internal training feedback that aims to conduct an effective search and improve the search performance.
+It collects the detailed feedback from the model training process and selects the search actions on the expanding search space based on the feedback and the pre-built conditional probability distribution of search actions.
 
 *Our system is still a prototype, and we will continue to optimize and improve this system.*
 
@@ -28,12 +25,11 @@ Due to space limitations, we provide an **Extented Report of DREAM** in [this fi
 - Motivation/                      
 - SupplementalExperimentResults/   
     - load_param4autokeras                   
-    - RQ1-Figure/
+    - Experiment-Figure/
     - reproduct_models_from_parameters/
     - PriorityTable.md
     - ActionTable.md
 - README.md
-- Extented_Report.md
 ```
 
 
@@ -45,7 +41,7 @@ It is worthy to notice that TensorFlow may have compatibility problems on differ
 
 ```bash
 $ pip install keras-tuner==1.0.2 keras==2.3.1 tensorflow==2.4.3 autokeras==1.0.12 tensorflow_datasets==2.1.0 matplotlib==3.3.0
-$ # OR pip install-r requirements.txt
+$ # OR pip install -r requirements.txt
 ```
 
 After installing TensorFlow and AutoKeras, use the following command to install the DREAM in AutoKeras.
@@ -87,32 +83,32 @@ When you have downloaded the dataset, you need to assign the `data_dir` in the l
 
 ## Experiment Results
 
-### RQ1-Figure
+### Experiment-Figure
 
-To evaluate the effectiveness of DREAM in fixing the AutoML ineffective search bug and performance bug, we conduct comparative experiments with a total of fifteen searches on four datasets with each search strategy (i.e., three baseline strategies in AutoKeras and the repaired search in DREAM).
-In this experiment, we observe whether DREAM can effectively repair the bugs in the AutoML pipeline and guide the search to perform better and more effectively, and the results are shown in this [directory](./SupplementalExperimentResults/RQ1-Figure).
+To evaluate the effectiveness of *DREAM* in searching models on the given tasks, we conduct comparative experiments with a total of eighteen groups of searches on four datasets with each search strategy (i.e., three baseline strategies in AutoKeras and DREAM).
+In this experiment, we observe whether DREAM can effectively guide the search to perform better, and the results are shown in this [directory](./SupplementalExperimentResults/Experiment-Figure).
 
-The results show that *DREAM* is effective in repairing the performance and ineffective search bugs of the AutoML pipeline.
-*DREAM* achieves an average score of 83.00% on four datasets within 25 trials, which is significantly better than the score of other baselines (i.e., 51.51% in Greedy, 54.13% in Bayesian, and 52.38% in Hyperband).
-And all searches in DREAM take an average of 10.06 hours to reach the target accuracy of 70% on four datasets.
-In contrast, only two-fifth of the searches in the AutoKeras pipeline achieve the search target within 24 hours.
-These results show the effectiveness of *DREAM* in repairing the AutoML bugs.
+The results show that *DREAM* is effective and efficient in searching models and achieve better performance than AutoKeras.
+*DREAM* achieves an average score of 83.21% on four datasets within 25 trials, which is significantly better than the score of other baselines (i.e., 51.11% in Greedy, 54.66% in Bayesian, and 50.47% in Hyperband).
+And all searches in *DREAM* take an average of 7.94 hours to reach the target accuracy of 70% on four datasets.
+In contrast, only 20/54 of the searches in the AutoKeras system achieve the search target within 24 hours.
+These results show the effectiveness of *DREAM* in searching well-performance models for the given tasks.
 
-The following two figures show the effectiveness of DREAM in repairing the performance bug on the Food-101 dataset and repairing the ineffective search bug on the TinyImagenest dataset, respectively.
+The following two figures show the effectiveness of *DREAM* on the Food-101 dataset and TinyImagenest dataset, respectively.
 
-![figure](./SupplementalExperimentResults/RQ1-Figure/Performance-Repair/Food-101/time-f101_0.png)
+![figure](./SupplementalExperimentResults/Experiment-Figure/Search_in_24_hours/Food-101/time-f101_0.png)
 
-![figure](./SupplementalExperimentResults/RQ1-Figure/IneffectiveSearch-Repair/TinyImagenet/trial-tiny_4.png)
+![figure](./SupplementalExperimentResults/Experiment-Figure/Search_in_25_trials/TinyImagenet/trial-tiny_4.png)
 
 
 ## Reproduction
 
-Our experiment results on four datasets are saved in [here](https://drive.google.com/file/d/1BMlcv9QF6k-v6GDouyu8lpA1oolMaBIp/view?usp=sharing).
+Our experiment results on four datasets are saved in [here](https://drive.google.com/file/d/10OZVaFdjP387ACl_1BDaP9AEjD3w_YX2/view?usp=sharing).
 Since the maximum model in our search is close to 1 GB, and our experiments search hundreds of models, which may bring a large amount of data, we only reserve part of the sample models for display, and most of the models only reserved the corresponding architectures and hyperparameters.
 You can refer to this [code](./SupplementalExperimentResults/reproduct_models_from_parameters/reproduce_experiment_model.py) to load and restore these models from the `param.pkl`.
-Detailed descriptions about the results are shown in the `ReadMe.md` in the zip file in the above [link](https://drive.google.com/file/d/1BMlcv9QF6k-v6GDouyu8lpA1oolMaBIp/view?usp=sharing).
+Detailed descriptions of the results are shown in the `ReadMe.md` in the zip file in the above [link](https://drive.google.com/file/d/10OZVaFdjP387ACl_1BDaP9AEjD3w_YX2/view?usp=sharing).
 
-The full table of the priority of search actions are shown in [here](./SupplementalExperimentResults/PriorityTable.md), and the full table of the search actions are shown as [this table](./SupplementalExperimentResults/ActionTable.md).
+The full table of the priority of search actions is shown in [here](./SupplementalExperimentResults/PriorityTable.md), and the full table of the search actions is shown in [this table](./SupplementalExperimentResults/ActionTable.md).
 
 In addition, the search results of two cases in Motivation are also shown in [`Motivation`](./Motivation).
 The `log.pkl` contains the search history of each strategy, and the `best_param.pkl` stores the best model architecture in each search.
@@ -120,7 +116,7 @@ If you want to reproduce the DREAM search in Motivation, you can use the [demo f
 
 
 If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly to reproduce the repair of `DREAM`.
-It is worth mentioning that you need to use `-op` to assign the initial model architecture as the beginning of the search.
+It is worth mentioning that you need to use `-op` to assign the initial model architecture which is the beginning of the search.
 The result will be saved in this [directory](./DREAM/Test_dir/demo_result) and the [log](./DREAM/Test_dir/demo_result/log.pkl) will also save there.
 If you want to conduct comparison experiments with AutoKeras methods, you need to use [`backup_reset.sh`](./DREAM/backup_reset.sh) to restore the original AutoKeras library, and then use the [`replace_file.sh`](./SupplementalExperimentResults/load_param4autokeras/replace_file.sh) to modify the library to load the initial parameter and record the search logs, as shown below.
 
