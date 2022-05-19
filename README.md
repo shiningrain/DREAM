@@ -3,7 +3,7 @@
 ## TL;DR
 
 A model search method guided by internal training feedback that aims to conduct an effective search and improve the search performance.
-It collects the detailed feedback from the model training process and selects the search actions on the expanding search space based on the feedback and the pre-built conditional probability distribution of search actions.
+It collects the detailed feedback from the model training process and selects the search actions on the expanding search space based on the feedback and the pre-built search action distribution of search actions.
 
 *Our system is still a prototype, and we will continue to optimize and improve this system.*
 
@@ -68,7 +68,7 @@ Therefore we suggest that if you still want to use the search methods of AutoKer
 It is easy to use *DREAM* to conduct effective searches. 
 When the environment configuration in `Setup` is finished, you can use *DREAM* to search models directly by using `greedy` tuner in `autokeras.ImageClassifier()`.
 To show our method intuitively, we provide a demo case in [demo.py](./DREAM/demo0.py), which is based on the CIFAR-100 dataset.
-You can just run [demo.py](./DREAM/demo0.py) to see how *DREAM* search models with the expanded search space and feedback-driven search.
+You can just run [demo.py](./DREAM/demo0.py) to see how *DREAM* search models with the expanded search space and search action distribution-driven search.
 In addition, you can also specify the parameters in this code to customize the search process. We have made some necessary comments on the code for easy understanding.
 
 ``` bash
