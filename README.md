@@ -120,6 +120,7 @@ It is worth mentioning that you need to use `-op` to assign the initial model ar
 The result will be saved in this [directory](./DREAM/Test_dir/demo_result) and the [log](./DREAM/Test_dir/demo_result/log.pkl) will also save there.
 If you want to conduct comparison experiments with AutoKeras methods, you need to use [`backup_reset.sh`](./DREAM/backup_reset.sh) to restore the original AutoKeras library, and then use the [`replace_file.sh`](./SupplementalExperimentResults/load_param4autokeras/replace_file.sh) to modify the library to load the initial parameter and record the search logs, as shown below.
 
+
 ```bash
 $ cd ./DREAM
 $ ./backup_reset.sh /xxx/envs/env_name/lib/python3.7/site-packages
