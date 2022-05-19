@@ -59,13 +59,13 @@ $ ./initial_Dream.sh /xxx/envs/env_name/lib/python3.7/site-packages /xxx/envs/en
 
 The current version of DREAM will substitute the Greedy search strategy in AutoKeras. 
 We are not sure whether the code of the search strategies in AutoKeras potentially conflicts with DREAM.
-Therefore we suggest that if you still want to use the unrepaired search of AutoKeras, you could use `backup_reset.sh` to make a backup for the original AutoKeras and Kerastuner lib before installing DREAM, or you could refer to the [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to clone the same environment with original AutoKeras.
+Therefore we suggest that if you still want to use the search methods of AutoKeras, you could use `backup_reset.sh` to make a backup for the original AutoKeras and Kerastuner lib before installing DREAM, or you could refer to the [anaconda doc](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html) to clone the same environment with original AutoKeras.
 **In the future, we will continue to improve the DREAM to avoid conflicts between the search strategies.**
 
 
 
 ## Usage
-It is easy to use *DREAM* to repair the AutoML pipeline and conduct effective searches. 
+It is easy to use *DREAM* to conduct effective searches. 
 When the environment configuration in `Setup` is finished, you can use *DREAM* to search models directly by using `greedy` tuner in `autokeras.ImageClassifier()`.
 To show our method intuitively, we provide a demo case in [demo.py](./DREAM/demo0.py), which is based on the CIFAR-100 dataset.
 You can just run [demo.py](./DREAM/demo0.py) to see how *DREAM* search models with the expanded search space and feedback-driven search.
@@ -115,7 +115,7 @@ The `log.pkl` contains the search history of each strategy, and the `best_param.
 If you want to reproduce the DREAM search in Motivation, you can use the [demo file](./DREAM/demo0.py) to load the `param_initial.pkl` as the initial architecture `args.origin_path` to start the search.
 
 
-If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly to reproduce the repair of `DREAM`.
+If you want to reproduce our experiment, you can also use the [demo.py](./DREAM/demo0.py) directly to reproduce the searches of `DREAM`.
 It is worth mentioning that you need to use `-op` to assign the initial model architecture which is the beginning of the search.
 The result will be saved in this [directory](./DREAM/Test_dir/demo_result) and the [log](./DREAM/Test_dir/demo_result/log.pkl) will also save there.
 If you want to conduct comparison experiments with AutoKeras methods, you need to use [`backup_reset.sh`](./DREAM/backup_reset.sh) to restore the original AutoKeras library, and then use the [`replace_file.sh`](./SupplementalExperimentResults/load_param4autokeras/replace_file.sh) to modify the library to load the initial parameter and record the search logs, as shown below.
@@ -135,4 +135,4 @@ $ python test_run_autokeras.py -d cifar100 -tn greedy
 ```
 
 The `-tn` can assign the search strategies (i.e., greedy, bayesian, hyperband) in AutoKeras, and `-op` assigns the initial model architecture as the beginning of the search.
-Due to the inevitable random variables in the search strategies, we cannot guarantee that the search results are completely consistent with our experimental results, but this random factor will not affect the effectiveness of DREAM in repairing bugs.
+Due to the inevitable random variables in the search strategies, we cannot guarantee that the search results are completely consistent with our experimental results, but this random factor will not affect the effectiveness of DREAM in searching models.
