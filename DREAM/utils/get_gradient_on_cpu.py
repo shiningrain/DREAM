@@ -23,8 +23,8 @@ if __name__ == '__main__':
 
     epoch=args.epoch
     model=load_model(args.model)
-    trainingExample=np.load(args.data_x)
-    trainingY=np.load(args.data_y)
+    trainingExample=np.load(args.data_x, allow_pickle=True)
+    trainingY=np.load(args.data_y, allow_pickle=True)
 
 
     gradient_list=[]

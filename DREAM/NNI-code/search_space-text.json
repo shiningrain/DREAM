@@ -1,0 +1,458 @@
+{
+    "text_block_1/block_type": {
+        "_type": "choice",
+        "_value": [
+            {
+                "_name": "vanilla",
+                "text_block_1/max_tokens": {
+                    "_type": "choice",
+                    "_value": [
+                        500,
+                        5000,
+                        20000
+                    ]
+                },
+                "text_block_1/text_to_int_sequence_1/output_sequence_length": {
+                    "_type": "choice",
+                    "_value": [
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/embedding_1/pretraining": {
+                    "_type": "choice",
+                    "_value": [
+                        "random",
+                        "glove",
+                        "fasttext",
+                        "word2vec",
+                        "none"
+                    ]
+                },
+                "text_block_1/embedding_1/embedding_dim": {
+                    "_type": "choice",
+                    "_value": [
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/embedding_1/dropout": {
+                    "_type": "choice",
+                    "_value": [
+                        0.0,
+                        0.25,
+                        0.5
+                    ]
+                },
+                "text_block_1/conv_block_1/kernel_size": {
+                    "_type": "choice",
+                    "_value": [
+                        3,
+                        5,
+                        7
+                    ]
+                },
+                "text_block_1/conv_block_1/separable": {
+                    "_type": "choice",
+                    "_value": [
+                        false,
+                        true
+                    ]
+                },
+                "text_block_1/conv_block_1/max_pooling": {
+                    "_type": "choice",
+                    "_value": [
+                        false,
+                        true
+                    ]
+                },
+                "text_block_1/conv_block_1/dropout": {
+                    "_type": "choice",
+                    "_value": [
+                        0.0,
+                        0.25,
+                        0.5
+                    ]
+                },
+                "text_block_1/conv_block_1/num_blocks": {
+                    "_type": "choice",
+                    "_value": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "text_block_1/conv_block_1/num_layers": {
+                    "_type": "choice",
+                    "_value": [
+                        1,
+                        2
+                    ]
+                },
+                "text_block_1/conv_block_1/filters_0_0": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/conv_block_1/filters_0_1": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/conv_block_1/filters_1_0": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/conv_block_1/filters_1_1": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/spatial_reduction_1/reduction_type": {
+                    "_type": "choice",
+                    "_value": [
+                        "flatten",
+                        "global_max",
+                        "global_avg"
+                    ]
+                },
+                "text_block_1/dense_block_1/use_batchnorm": {
+                    "_type": "choice",
+                    "_value": [
+                        false,
+                        true
+                    ]
+                },
+                "text_block_1/dense_block_1/num_layers": {
+                    "_type": "choice",
+                    "_value": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "text_block_1/dense_block_1/units_0": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                },
+                "text_block_1/dense_block_1/dropout": {
+                    "_type": "choice",
+                    "_value": [
+                        0.0,
+                        0.25,
+                        0.5
+                    ]
+                },
+                "text_block_1/dense_block_1/units_1": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                },
+                "text_block_1/conv_block_1/filters_2_0": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/conv_block_1/filters_2_1": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/dense_block_1/units_2": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                }
+            },
+            {
+                "_name": "transformer",
+                "text_block_1/max_tokens": {
+                    "_type": "choice",
+                    "_value": [
+                        500,
+                        5000,
+                        20000
+                    ]
+                },
+                "text_block_1/text_to_int_sequence_1/output_sequence_length": {
+                    "_type": "choice",
+                    "_value": [
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/transformer_1/pretraining": {
+                    "_type": "choice",
+                    "_value": [
+                        "random",
+                        "glove",
+                        "fasttext",
+                        "word2vec",
+                        "none"
+                    ]
+                },
+                "text_block_1/transformer_1/embedding_dim": {
+                    "_type": "choice",
+                    "_value": [
+                        32,
+                        64,
+                        128,
+                        256,
+                        512
+                    ]
+                },
+                "text_block_1/transformer_1/num_heads": {
+                    "_type": "choice",
+                    "_value": [
+                        8,
+                        16,
+                        32
+                    ]
+                },
+                "text_block_1/transformer_1/dense_dim": {
+                    "_type": "choice",
+                    "_value": [
+                        128,
+                        256,
+                        512,
+                        1024,
+                        2048
+                    ]
+                },
+                "text_block_1/transformer_1/dropout": {
+                    "_type": "choice",
+                    "_value": [
+                        0.0,
+                        0.25,
+                        0.5
+                    ]
+                },
+                "text_block_1/spatial_reduction_1/reduction_type": {
+                    "_type": "choice",
+                    "_value": [
+                        "flatten",
+                        "global_max",
+                        "global_avg"
+                    ]
+                },
+                "text_block_1/dense_block_1/use_batchnorm": {
+                    "_type": "choice",
+                    "_value": [
+                        false,
+                        true
+                    ]
+                },
+                "text_block_1/dense_block_1/num_layers": {
+                    "_type": "choice",
+                    "_value": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "text_block_1/dense_block_1/units_0": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                },
+                "text_block_1/dense_block_1/dropout": {
+                    "_type": "choice",
+                    "_value": [
+                        0.0,
+                        0.25,
+                        0.5
+                    ]
+                },
+                "text_block_1/dense_block_1/units_1": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                }
+            },
+            {
+                "_name": "ngram",
+                "text_block_1/max_tokens": {
+                    "_type": "choice",
+                    "_value": [
+                        500,
+                        5000,
+                        20000
+                    ]
+                },
+                "text_block_1/text_to_ngram_vector_1/ngrams": {
+                    "_type": "choice",
+                    "_value": [
+                        1,
+                        2
+                    ]
+                },
+                "text_block_1/dense_block_1/use_batchnorm": {
+                    "_type": "choice",
+                    "_value": [
+                        false,
+                        true
+                    ]
+                },
+                "text_block_1/dense_block_1/num_layers": {
+                    "_type": "choice",
+                    "_value": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "text_block_1/dense_block_1/units_0": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                },
+                "text_block_1/dense_block_1/dropout": {
+                    "_type": "choice",
+                    "_value": [
+                        0.0,
+                        0.25,
+                        0.5
+                    ]
+                },
+                "text_block_1/dense_block_1/units_1": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                },
+                "text_block_1/dense_block_1/units_2": {
+                    "_type": "choice",
+                    "_value": [
+                        16,
+                        32,
+                        64,
+                        128,
+                        256,
+                        512,
+                        1024
+                    ]
+                }
+            }
+        ]
+    },
+    "classification_head_1/dropout": {
+        "_type": "choice",
+        "_value": [
+            0.0,
+            0.25,
+            0.5
+        ]
+    },
+    "optimizer": {
+        "_type": "choice",
+        "_value": [
+            "adam",
+            "sgd",
+            "adam_weight_decay"
+        ]
+    },
+    "learning_rate": {
+        "_type": "choice",
+        "_value": [
+            0.1,
+            0.01,
+            0.001,
+            0.0001,
+            2e-05,
+            1e-05
+        ]
+    }
+}

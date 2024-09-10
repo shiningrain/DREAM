@@ -34,24 +34,45 @@ def get_arch(hyperparameters):
     return None
 
 def ol_judge(history,threshold,rate):
-    acc=history['accuracy']
-    maximum=[]
-    minimum=[]
-    count=0
-    for i in range(len(acc)):
-        if i==0 or i ==len(acc)-1:
-            continue
-        if acc[i]-acc[i-1]>=0 and acc[i]-acc[i+1]>=0:
-            maximum.append(acc[i])
-        if acc[i]-acc[i-1]<0 and acc[i]-acc[i+1]<0:
-            minimum.append(acc[i])
-    for i in range(min(len(maximum),len(minimum))):
-        if maximum[i]-minimum[i]>=threshold:
-            count+=1
-    if count>=rate*len(acc):
-        return True
+    if 'accuracy' in history:
+        acc=history['accuracy']
+        maximum=[]
+        minimum=[]
+        count=0
+        for i in range(len(acc)):
+            if i==0 or i ==len(acc)-1:
+                continue
+            if acc[i]-acc[i-1]>=0 and acc[i]-acc[i+1]>=0:
+                maximum.append(acc[i])
+            if acc[i]-acc[i-1]<0 and acc[i]-acc[i+1]<0:
+                minimum.append(acc[i])
+        for i in range(min(len(maximum),len(minimum))):
+            if maximum[i]-minimum[i]>=threshold:
+                count+=1
+        if count>=rate*len(acc):
+            return True
+        else:
+            return False
     else:
-        return False
+        loss=history['loss']
+        maximum=[]
+        minimum=[]
+        count=0
+        for i in range(len(loss)):
+            if i==0 or i ==len(loss)-1:
+                continue
+            if loss[i]-loss[i-1]<0 and loss[i]-loss[i+1]<0:
+                maximum.append(loss[i])
+            if loss[i]-loss[i-1]>=0 and loss[i]-loss[i+1]>=0:
+                minimum.append(loss[i])
+        for i in range(min(len(maximum),len(minimum))):
+            if maximum[i]-minimum[i]>=threshold: #TODO update loss threshold for regression
+                count+=1
+        if count>=rate*len(loss):
+            return True
+        else:
+            return False
+
 
 def has_NaN(output):
     output=np.array(output)
@@ -73,9 +94,10 @@ def max_delta_acc(acc_list):
 def get_loss(history,unstable_threshold=0.03,unstable_rate=0.2,sc_threshold=0.01):
 
     train_loss=history['loss']
-    train_acc=history['accuracy']
     test_loss=history['val_loss']
-    test_acc=history['val_accuracy']
+    if 'accuracy' in history.keys():
+        train_acc=history['accuracy']
+        test_acc=history['val_accuracy']
     count=0
 
     if train_loss!=[]:
@@ -84,7 +106,7 @@ def get_loss(history,unstable_threshold=0.03,unstable_rate=0.2,sc_threshold=0.01
 
         if ol_judge(history,unstable_threshold,unstable_rate):  
             return 'oscillating'
-        elif max_delta_acc(test_acc)<sc_threshold and max_delta_acc(train_acc)<sc_threshold:
+        elif 'accuracy' in history.keys() and max_delta_acc(test_acc)<sc_threshold and max_delta_acc(train_acc)<sc_threshold:
             return 'slow_converge'
         else:
             return 'normal'
@@ -457,7 +479,7 @@ def select_action(candidate_dict_path,beam_size=3):
 
 def write_algw(root_dir):
     import subprocess
-    command="your_python_path ./utils/get_write_algw.py -d {}" #TODO:need to set your your python interpreter path
+    command="/home/zxy/main/anaconda3/envs/tf_ak_test/bin/python ./utils/get_write_algw.py -d {}" #TODO:need to set your your python interpreter path
 
     out_path=os.path.join(root_dir,'algw_out')
     out_file = open(out_path, 'w')
@@ -588,3 +610,73 @@ def get_opti_value(log_dict):
             print('===============Use optimal Structure!!===============\n')
             return True,tmp
     return False,None
+
+if __name__=="__main__":
+    # algw='resnet-normal-dying-normal'
+    # result_dict,operation_list,operation_list1=load_evaluation(algw,evaluation_pkl='/home/zxy/workspace/DL_work/DL_autokeras/1Autokeras/test_codes/experiment/FORM/utils/priority_all_0113.pkl')
+    # a,l,g,w=judge_dirs('/home/zxy/workspace/DL_work/DL_autokeras/1Autokeras/test_codes/experiment/FORM/Test_dir/demo_result_c100_8/13-0.82-0c3796b545bb')
+    with open('./utils/priority_all_0113.pkl', 'rb') as f:#input,bug type,params
+        evaluation = pickle.load(f)
+    # with open(os.path.abspath('./utils/priority_pure.pkl'), 'rb') as f:#input,bug type,params
+    #     tmp = pickle.load(f)
+
+    # targe_priority=['reduction_type-global_max','reduction_type-global_avg','reduction_type-flatten']
+    for key in evaluation.keys():
+        # tmp_priority=[]
+        # for action in evaluation[key].keys():
+        #     if action in targe_priority:
+        #         tmp_priority.append(evaluation[key][action])
+        # if tmp_priority==[]:
+        #     continue
+        # tmp_priority.sort(reverse=True)
+        # for tp in range(len(targe_priority)):
+        #     evaluation[key][targe_priority[tp]]=tmp_priority[tp]
+        # print(1)
+        if 'normal-normal-normal' in key and 'dropout-0.5' in evaluation[key].keys():
+            sorted_result = sorted(evaluation[key].items(), key=lambda x: x[1], reverse=True)
+            # evaluation[key]['dropout-0.5']=evaluation[key][sorted_result[3][0]]*0.96
+            print(1)
+        block=key.split('-')[0]
+        # if 'block_type-{}'.format(block) in evaluation[key].keys():
+        #     del evaluation[key]['block_type-{}'.format(block)]
+        # try:
+        #     evaluation[key]['triple_train-True']=evaluation[key]['multi_step-True']*(0.9+0.1*np.random.random())
+        #     evaluation[key]['triple_train-False']=-evaluation[key]['triple_train-True']
+        # except:
+        #     print(key)
+        #     pass
+        # if block =='efficient':
+            
+        #     # try:
+        #     #     evaluation[key]['multi_step-True']=evaluation[key]['trainable-True']-0.05
+        #     # except:
+        #     #     print(key)
+        #     #     pass
+        
+        #     result_dict=evaluation[key]
+        #     opt_list=list(result_dict.keys())
+        #     if 'dropout-0.5' not in opt_list:
+        #         print(1)
+        #     else:
+        #         print(evaluation[key]['dropout-0.5'])
+        #         print(evaluation[key]['dropout-0.25'])
+        #         print(evaluation[key]['dropout-0.0'])
+        #     # for opt in opt_list:
+        #     #     if result_dict[opt]=='/':
+        #     #         del result_dict[opt]
+        #     # sorted_result = sorted(result_dict.items(), key=lambda x: x[1], reverse=True)
+        #     print(1)
+        # if len(tmp[key])<len(sorted_result):
+        #     sorted_result=sorted_result[:len(tmp[key])]
+        # elif len(tmp[key])>len(sorted_result):
+        #     print('error')
+        # tmp_dict={}
+        # for res in range(len(sorted_result)):
+        #     tmp_dict[tmp[key][res]]=sorted_result[res][1]
+        # evaluation[key]=copy.deepcopy(tmp_dict)
+        # # print(1)evaluation['xception-normal-normal-normal']['dropout-0.25']
+
+    with open('./utils/priority_all_0113.pkl', 'wb') as f:
+        pickle.dump(evaluation, f)
+    print(1)
+    

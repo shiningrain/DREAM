@@ -24,6 +24,8 @@ import uuid
 import kerastuner
 import tensorflow as tf
 from kerastuner.engine import hypermodel as hm_module
+from tensorflow.keras.layers.experimental import preprocessing
+from tensorflow.python.util import nest
 # from autokeras.engine import compute_gradient as cg
 
 def evaluate_training(train_history,method='val_accuracy'):
@@ -45,7 +47,7 @@ def evaluate_training(train_history,method='val_accuracy'):
 
 class LossHistory(keras.callbacks.Callback):
 
-    def __init__(self,training_data,model,total_epoch,batch_size,save_path): #only support epoch method now
+    def __init__(self,training_data,model,total_epoch,batch_size,save_path,tmp_save_dir): #only support epoch method now
         """[summary]
 
         Args:
@@ -69,19 +71,31 @@ class LossHistory(keras.callbacks.Callback):
         with open(save_path, 'wb') as f:
             pickle.dump(save_dict, f)
 
-        self.x_path='./Test_dir/tmp/x.npy'
-        self.y_path='./Test_dir/tmp/y.npy'
-        self.model_path='./Test_dir/tmp/model.h5'
+        self.x_path=os.path.join(tmp_save_dir,'x.npy')
+        self.y_path=os.path.join(tmp_save_dir,'y.npy')
+        self.model_path=os.path.join(tmp_save_dir,'model.h5py')
         trainingExample = self.trainX
         trainingY=self.trainy
-        np.save('./Test_dir/tmp/x.npy',trainingExample)
-        np.save('./Test_dir/tmp/y.npy',trainingY)
+        np.save(self.x_path,trainingExample)
+        np.save(self.y_path,trainingY)
 
     def on_epoch_end(self,epoch,logs={}):
         # if (epoch)%self.checkgap==0:
             
-        self.model.save('./Test_dir/tmp/model.h5')
+        self.model.save(self.model_path)
         get_gradient(self.model_path,self.x_path,self.y_path,epoch,self.save_path)
+
+
+
+def get_gradient(model_path,x_path,y_path,epoch,save_path):
+    import subprocess
+    command="/home/zxy/main/anaconda3/envs/tf_ak_test/bin/python ./utils/get_gradient_on_cpu.py -m {} -dx {} -dy {} -ep {} -sp {}" #TODO:need to set your your python interpreter path
+
+    out_path=save_path.split('.')[0]+'_out'
+    out_file = open(out_path, 'w')
+    out_file.write('logs\n')
+    run_cmd=command.format(model_path,x_path,y_path,epoch,save_path)
+    subprocess.Popen(run_cmd, shell=True, stdout=out_file, stderr=out_file)
 
 
 def read_data(dataset,batch_size):
@@ -157,12 +171,13 @@ def get_new_hps(hyperparameters,key,value):
     return hyperparameters,None # whether this operation extend the hyperspace
 
 
-def build_train(hyperparameters,hm,key,new_value_list,config,root_save_dir,score_dict_path,score_dict,previous=None):
+def build_train(hyperparameters,hm,key,new_value_list,config,root_save_dir,score_dict_path,score_dict,tmp_save_dir,previous=None):
     score_dict[key]={}
+
     for value in new_value_list:
         new_hp=hyperparameters.copy()
         # new_hp.values[key]=value
-        new_hp,extend=get_new_hps(new_hp,key,value)
+        #new_hp,extend=get_new_hps(new_hp,key,value)#TODO: back
         extend=None# TODO: delete, only use in block_type test
 
         # if extend==None:
@@ -174,13 +189,15 @@ def build_train(hyperparameters,hm,key,new_value_list,config,root_save_dir,score
         with open(new_hp_path, 'wb') as f:
             pickle.dump(new_hp, f)
         model=hm.build(new_hp)
+        model=adapt(model)# need to preprocess for text model!!!
         config['callbacks']=[]
         config['callbacks'].append(
         LossHistory(training_data=config['dataset'],
-        batch_size=config['batch_size'],
-        model=model,
-        total_epoch=config['epoch'],
-        save_path=new_save_path,
+            batch_size=config['batch_size'],
+            model=model,
+            total_epoch=config['epoch'],
+            save_path=new_save_path,
+            tmp_save_dir=tmp_save_dir
         )) 
         _,score=train_model(config=config,model=model,callbacks=config['callbacks'],save_dir=new_save_dir)
         # score=0#TODO:delete
@@ -193,12 +210,6 @@ def build_train(hyperparameters,hm,key,new_value_list,config,root_save_dir,score
             score_dict[key][str(value)]['previous']=previous
         with open(score_dict_path, 'wb') as f:
             pickle.dump(score_dict, f)
-        if extend!=None:
-            for ext_opt in extend:
-                new_extend_value_list=mutate_hp(new_hp,ext_opt)
-                new_root_save_dir=os.path.join(root_save_dir,'extend-{}-{}'.format(key.split('/')[-1],str(value)))
-                previous='{}-{}'.format(key.split('/')[-1],str(value))
-                build_train(new_hp,hm,ext_opt,new_extend_value_list,config,new_root_save_dir,score_dict_path,score_dict,previous=previous)
 
 
 def modify_model(model,acti=None,init=None,method='acti'):
@@ -323,3 +334,49 @@ def load_train(root_model_path,config,root_save_dir,score_dict_path,score_dict):
         score_dict['initial'][init]['diff']=score-score_dict['origin']['score']
         with open(score_dict_path, 'wb') as f:
             pickle.dump(score_dict, f)
+
+# tf.data.experimental.save(
+#     ds, tf_data_path, compression='GZIP'
+# )
+# with open(tf_data_path + '/element_spec', 'wb') as out_:  # also save the element_spec to disk for future loading
+#     pickle.dump(ds.element_spec, out_)
+
+# for text dataset:
+def load_zipped_imdb(dirs='/home/zxy/main/DL_autokeras/test_codes/FORM/imdb_dataset'):
+    with open(dirs + '/element_spec', 'rb') as in_:
+        es = pickle.load(in_)
+    new_dataset = tf.data.experimental.load(
+        dirs, es, compression='GZIP')
+    return new_dataset
+
+def adapt(model, dataset_name='imdb'):
+    if dataset_name=='imdb':
+        dataset=load_zipped_imdb()
+    elif dataset_name=='reuters':
+        dataset=load_zipped_imdb('/home/zxy/main/DL_autokeras/test_codes/FORM/reuters_dataset')
+    else:
+        print('not support dataset')
+        os._exit(0)
+    x = dataset.map(lambda x, y: x)
+
+    def get_output_layer(tensor):
+        tensor = nest.flatten(tensor)[0]
+        for layer in model.layers:
+            if isinstance(layer, tf.keras.layers.InputLayer):
+                continue
+            if not isinstance(layer, preprocessing.PreprocessingLayer):
+                break
+            input_node = nest.flatten(layer.input)[0]
+            if input_node is tensor:
+                return layer
+        return None
+
+    for index, input_node in enumerate(nest.flatten(model.input)):
+        temp_x = x.map(lambda *args: nest.flatten(args)[index])
+        layer = get_output_layer(input_node)
+        while layer is not None:
+            if isinstance(layer, preprocessing.PreprocessingLayer):
+                layer.adapt(temp_x)
+            temp_x = temp_x.map(layer)
+            layer = get_output_layer(layer.output)
+    return model

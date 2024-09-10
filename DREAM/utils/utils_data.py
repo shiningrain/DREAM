@@ -10,6 +10,12 @@ import numpy as np
 import tensorflow.keras as keras
 from tensorflow.keras.datasets import mnist,cifar10,fashion_mnist,cifar100
 import tensorflow as tf
+import time
+import argparse
+import shutil
+from sklearn.datasets import load_files
+import os
+import pickle
 
 
 def mnist_load_data():
@@ -105,6 +111,97 @@ def format_example(image, label,image_size=224):
     image = tf.image.resize(image, (image_size, image_size))
     return image, label
 
+
+
+def get_reuters(save_path='/home/zxy/main/DL_autokeras/test_codes/FORM/2024_dataset/reuters.pkl'):
+    def get_newswire(n,X):
+        index_to_word = {}
+        for key, value in word_to_index.items():     # to loop over the dict object
+            index_to_word[value] = key          # appending the dictionary {INDEX : 'WORD'}  (inverse dictionary!)
+        wires = []
+        #myDict = defaultdict(dict)
+        for i in range(n):
+            wire =(' '.join(index_to_word[x] for x in X[i]))
+            wires.append(wire)
+        return wires
+
+    if not os.path.exists(save_path):
+        from tensorflow.keras.datasets import reuters
+        (x_train, y), (x_test,y_val) = reuters.load_data()
+        for i in x_train:
+            try:
+                i.remove(30980)
+            except:
+                pass
+            try:
+                i.remove(30981)
+            except:
+                pass
+                
+        for i in x_test:
+            try:
+                i.remove(30980)
+            except:
+                pass
+            try:
+                i.remove(30981)
+            except:
+                pass
+        word_to_index = reuters.get_word_index()
+        wires_train = get_newswire(len(x_train),x_train)
+        wires_test = get_newswire(len(x_test),x_test)
+        new_x_train=np.array(wires_train)
+        new_x_test=np.array(wires_test)
+        save_list=[(new_x_train, y), (new_x_test, y_val)]
+        with open(save_path, 'wb') as f:
+            pickle.dump(save_list, f)
+    else:
+        with open(save_path, 'rb') as f:#input,bug type,params
+            save_list = pickle.load(f)
+    return save_list[0],save_list[1]
+
+def get_trec(save_path='/home/zxy/main/DL_autokeras/test_codes/FORM/2024_dataset/trec.pkl'):
+    with open(save_path, 'rb') as f:#input,bug type,params
+        save_list = pickle.load(f)
+    return save_list[0],save_list[1]
+
+def get_agn(save_path='/home/zxy/main/DL_autokeras/test_codes/FORM/2024_dataset/agnews.pkl'):
+    with open(save_path, 'rb') as f:#input,bug type,params
+        save_list = pickle.load(f)
+    return save_list[0],save_list[1]
+
+def get_imdb():
+    # dataset = tf.keras.utils.get_file(
+    #     fname="aclImdb.tar.gz",
+    #     origin="http://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz",
+    #     extract=True,
+    # )
+    dataset='/home/zxy/.keras/datasets/aclImdb.tar.gz'
+
+    # set path to dataset
+    IMDB_DATADIR = os.path.join(os.path.dirname(dataset), 'aclImdb')
+
+    classes = ['pos', 'neg']
+    train_data = load_files(os.path.join(IMDB_DATADIR, 'train'), shuffle=True, categories=classes)
+    test_data = load_files(os.path.join(IMDB_DATADIR,  'test'), shuffle=False, categories=classes)
+
+    x_train = np.array(train_data.data)
+    y_train = np.array(train_data.target)
+    x_test = np.array(test_data.data)
+    y_test = np.array(test_data.target)
+    # return (x_train,y_train),(x_test,y_test)
+    new_x_train=[]
+    new_x_test=[]
+    for i in range(len(x_train)):
+        new_x_train.append(bytes.decode(x_train[i]))
+    for i in range(len(x_test)):
+        new_x_test.append(bytes.decode(x_test[i]))
+
+    new_x_train=np.array(new_x_train)
+    new_x_test=np.array(new_x_test)
+    # print(new_x_train[0][:50])
+    print('get the dataset')
+    return (new_x_train,y_train),(new_x_test,y_test)
 
 if __name__=='__main__':
     # (x_train2, y_train2), (x_test2, y_test2)=emnist_load_data()

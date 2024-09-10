@@ -112,7 +112,7 @@ class GreedyOracle(kerastuner.Oracle):
         self.initial_hps = state["initial_hps"]
         self._tried_initial_hps = state["tried_initial_hps"]
 
-    # modify
+    # zxy
     def get_best_trial_id(self):
         best_trials = self.get_best_trials()
         if best_trials:
@@ -222,6 +222,9 @@ class GreedyOracle(kerastuner.Oracle):
             else:
                 tmp_t+=1
                 time.sleep(10)
+        
+        if 'vanilla' in algw and 'text' in algw_path:
+            algw=algw.replace('vanilla','vanillaT')
         print('==={}==='.format(tmp_t))
         if tmp_t>=10:
             print("=========No ALGW!!==========")
@@ -233,7 +236,8 @@ class GreedyOracle(kerastuner.Oracle):
         # print('Architecture Condition is {}; Convergence Condition is {}; Gradient Condition is {}; Weight Condition is {}'.format(arch,loss,grad,wgt))
         
         # opt_wgt_dict,opt_list=load_evaluation(algw,evaluation_pkl=os.path.abspath('./utils/priority_all.pkl'))
-        opt_wgt_dict,opt_list=load_evaluation(algw,evaluation_pkl=os.path.abspath('./utils/priority_all_0113.pkl'))
+        opt_wgt_dict,opt_list=load_evaluation(algw,evaluation_pkl=os.path.abspath('./utils/priority_all_0113-norm.pkl'))
+        #TODO: add text
 
         # tmp_save_dir=os.path.abspath(save_dir).replace('demo_result','tmp')
         # opt_wgt_dict,opt_list=load_evaluation(algw,evaluation_pkl=os.path.abspath('./utils/priority_all_0113.pkl'),save_dir=tmp_save_dir)
@@ -245,10 +249,14 @@ class GreedyOracle(kerastuner.Oracle):
             return None
 
         # step 3:
-
+        # opt_list=sort_opt_wgt_dict(opt_wgt_dict,opt_list)#our greedy method
+        # values=self.generate_hp_values_greedy(opt_list)
         values=self.generate_hp_values(opt_list,save_dir=save_dir)
-
+        print(time.time()-time1)
         print('================We have generated the values! Ready to TRAIN================')
+        # with open('/data/zxy/DL_autokeras/1Autokeras/test_codes/experiment/cifar_origin/autokeras_7.20_random_8/best_param.pkl', 'rb') as f:#input,bug type,params
+        #     hp = pickle.load(f)
+        # values=hp.values
         return values
 
     def obtain_beam_hps(self,
@@ -299,7 +307,14 @@ class GreedyOracle(kerastuner.Oracle):
             # opt_wgt_dict,opt_list=load_evaluation(algw)
             # print('Architecture Condition is {}; Convergence Condition is {}; Gradient Condition is {}; Weight Condition is {}'.format(arch,loss,grad,wgt))
             opt_wgt_dict,opt_list=load_evaluation(algw,evaluation_pkl=os.path.abspath('./utils/priority_all.pkl'))
-
+            if opt_wgt_dict==None:
+                import shutil
+                dst_dir=os.path.join("/data1/zxy/DL_autokeras/1Autokeras/test_codes/special_condition",os.path.basename(new_save_dir))
+                try:
+                    shutil.copytree(new_save_dir, dst_dir)
+                except:
+                    pass
+                continue
             # if opt_wgt_dict==None:
             #     print(1)
                 # return None# bug return None tuner not fix
@@ -323,7 +338,9 @@ class GreedyOracle(kerastuner.Oracle):
         
         
         print('================We have generated the values! Ready to TRAIN================')
-
+        # with open('/data/zxy/DL_autokeras/1Autokeras/test_codes/experiment/cifar_origin/autokeras_7.20_random_8/best_param.pkl', 'rb') as f:#input,bug type,params
+        #     hp = pickle.load(f)
+        # values=hp.values
         return values
 
     def _get_best_action(self,
@@ -334,7 +351,7 @@ class GreedyOracle(kerastuner.Oracle):
                         best_hash_path='./Test_dir/demo_result/hash.pkl',
                         method='normal'):
 
-        # modify
+        # zxy
         # 0111 add new hps here
         additional_hp_list=['step_1_ratio','step_2_lr_scale','step_1_freeze','end_learning_rate','weight_decay_rate','momentum','multi_step','triple_train']
         
@@ -466,7 +483,7 @@ class GreedyOracle(kerastuner.Oracle):
 
     
     def generate_hp_values(self,operation_list,beam_size=None,random_select=0.2,save_dir='./Test_dir/demo_result'):
-        # modify
+        # zxy
 
         import os
         import pickle
@@ -543,7 +560,6 @@ class GreedyOracle(kerastuner.Oracle):
                             print("=========={}-Trigger==========".format(hp.name))
                             trigger_count+=1
                         else:
-                            
                             if hp.name in additional_hp_list:
                                 print('==========DefaultValue:{}============'.format(hp.name))
                                 continue
@@ -667,7 +683,7 @@ class GreedyOracle(kerastuner.Oracle):
                     # Keep trying until the set of values is unique,
                     # or until we exit due to too many collisions.
 
-                    # modify: add pretrain and trainable for xception
+                    # zxy: add pretrain and trainable for xception
                     try:
                         values=multi_action_search(values,best_hp_name,best_hp_value)
                     except:
@@ -755,7 +771,7 @@ class GreedyOracle(kerastuner.Oracle):
             values = self._generate_hp_values(hp_names)
             value_list.append(((values,0),0))
         return value_list
-    # modify
+    # zxy
     
     def _select_hps(self):#TODO::
         trie = Trie()
@@ -809,7 +825,7 @@ class GreedyOracle(kerastuner.Oracle):
     #         "values": None,
     #     }
 
-    # modify 
+    #zxy 
     def _populate_space(self, trial_id,root_path=None):
         if not all(self._tried_initial_hps):
             values = self._next_initial_hps()
@@ -819,15 +835,60 @@ class GreedyOracle(kerastuner.Oracle):
             }
 
         for i in range(self._max_collisions):
+            # import os
+            # import time
+            # import psutil
+            # import pickle
+            
+            # memory0=psutil.Process(os.getpid()).memory_info().rss / 1024 / 1024 / 1024
+            # start_time=time.time()
+            # overhead_path='/home/zxy/main/DL_autokeras/test_codes/FORM/Test_dir/overhead.pkl'
+            # if os.path.exists(overhead_path):
+            #     with open(overhead_path, 'rb') as f:#input,bug type,params
+            #         overhead = pickle.load(f)
+            # else:
+            #     overhead={}
+            #     overhead['monitor_memory']=[]
+            #     overhead['monitor_time']=[]
+            #     overhead['analyzer_memory']=[]
+            #     overhead['analyzer_time']=[]
+            # with open(overhead_path, 'wb') as f:
+            #     pickle.dump(overhead, f)
+            
+            # if root_path!=None:
+            #     values=self.obtain_new_hps(save_dir=root_path)
+            # else:
+            #     values=self.obtain_new_hps()
+            
+            # with open(overhead_path, 'rb') as f:#input,bug type,params
+            #     overhead = pickle.load(f)
+
+            # memory1=psutil.Process(os.getpid()).memory_info().rss / 1024 / 1024 / 1024
+            # memory=(memory0+memory1)/2
+            # time_use=time.time()-start_time
+            
+            # overhead['analyzer_memory'].append(memory)
+            # overhead['analyzer_time'].append(time_use)
+            
+            
+            # with open(overhead_path, 'wb') as f:
+            #     pickle.dump(overhead, f)
+            # values=self.obtain_beam_hps(beam_size=6,seed_size=1)
+
             if root_path!=None:
                 values=self.obtain_new_hps(save_dir=root_path)
             else:
                 values=self.obtain_new_hps()
-
-            if values==None: # worst: use greedy
+            if values==None:
                 print('============Fail to Generate!!!! USE GREEDY Method NOW!!!============')
                 hp_names = self._select_hps()
                 values = self._generate_hp_values(hp_names)
+                # zxy TODO: back
+                # import pickle
+                # with open("/data1/zxy/DL_autokeras/1Autokeras/FORM/FORM/Test_dir/demo_result_twophase/error.pkl", 'rb') as f:#input,bug type,params
+                #     error_hps = pickle.load(f)
+                # values=error_hps.values
+                # print(1)
             # Reached max collisions.
             if values is None:
                 continue
@@ -841,7 +902,7 @@ class GreedyOracle(kerastuner.Oracle):
             "status": kerastuner.engine.trial.TrialStatus.STOPPED,
             "values": None,
         }
-    # modify
+    # zxy
 
     def _get_best_hps(self):
         best_trials = self.get_best_trials()
@@ -863,7 +924,7 @@ class GreedyOracle(kerastuner.Oracle):
                 # if active, check if selected to be changed.
                 if hps.is_active(hp):
                     # if was active and not selected, do nothing.
-                    # modify modify architecture
+                    # zxy modify architecture
                     if hp.name=='image_block_1/block_type':
                         hps.values[hp.name] = hp.random_sample(self._seed_state)
                         continue
@@ -913,7 +974,7 @@ class Greedy(tuner_module.AutoTuner):
         )
         super().__init__(oracle=oracle, hypermodel=hypermodel, **kwargs)
 
-# modify 
+# zxy 
 # def judge_dirs(target_dir):
 #     params_path=os.path.join(target_dir,'param.pkl')
 #     gw_path=os.path.join(target_dir,'gradient_weight.pkl')
