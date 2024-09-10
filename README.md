@@ -2,10 +2,10 @@
 
 ## TL;DR
 
-A model search method guided by internal training feedback that aims to conduct an effective search and improve the search performance.
+A model search method guided by internal training feedback that aims to repair AutoML shortcomings and conduct an effective search and improve the search performance.
 It collects the detailed feedback from the model training process and selects the search actions on the expanding search space based on the feedback and the pre-built search action distribution of search actions.
 
-*Our system is still a prototype, and we will continue to optimize and improve this system.*
+*Our system is still a prototype and currently can be applied to AutoKeras and NNI, and we will continue to optimize and improve this system.*
 
 ## Repo Structure
 
@@ -34,7 +34,7 @@ It collects the detailed feedback from the model training process and selects th
 
 
 ## Setup
-DREAM is implemented on Python 3.7.7, TensorFlow 2.4.3, and AutoKeras 1.0.12.
+DREAM is implemented on Python 3.7.7, TensorFlow 2.4.3, AutoKeras 1.0.12 and NNI 3.0.
 To install all dependencies, please get into this directory and run the following command.
 It is worthy to notice that TensorFlow may have compatibility problems on different versions.
 **Please make sure the version of TensorFlow is 2.4.3** after installation.
